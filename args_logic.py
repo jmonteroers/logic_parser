@@ -27,3 +27,12 @@ def or_args(*args):
             val
         )
     return current_value
+
+
+def in_args(values, *args):
+    """
+    apply in values to all args, connect with and
+    :param args:
+    :return:
+    """
+    return and_args(*[arg in values for arg in args])
