@@ -3,7 +3,7 @@ from binary_logic import parse_expression_with_parentheses
 def test_parse_expression_with_parentheses_empty():
     expression = "hey you OR"
     assert parse_expression_with_parentheses(expression) == (
-        [], "OR"
+        ["hey", "you"], "OR"
     )
 
 def test_parse_expression_with_parentheses_simple():

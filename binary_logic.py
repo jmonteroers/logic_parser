@@ -18,6 +18,7 @@ def rpn_logic(expression, values: list, operators=LOGICAL_OPS):
             return operators[token](*stack)
         else:
             stack.append(token in values)
+    return operators["AND"](*stack)
 
 def complex_rpn_logic(expression, values, operators=LOGICAL_OPS):
     """
@@ -27,15 +28,16 @@ def complex_rpn_logic(expression, values, operators=LOGICAL_OPS):
     :param operators:
     :return:
     """
-    # if no parentheses assume that is simple expression and can be evaluated
-    if "(" not in expression:
-        return rpn_logic(expression, values, operators)
-    # else, complex expression
-    # needs to be parsed
+    # terminal condition
+    if not "(" in expression:
+        return rpn_logic(expression, values)
     simpler_expressions, operator_name = parse_expression_with_parentheses(expression)
     logical_operator = operators[operator_name]
-    boolean_values = [complex_rpn_logic(simpler_expression, values=values) for
-                      simpler_expression in simpler_expressions]
+    boolean_values = [
+        complex_rpn_logic(simpler_expression,
+                          values=values)
+        for simpler_expression in simpler_expressions
+    ]
     return logical_operator(*boolean_values)
 
 
@@ -61,16 +63,31 @@ def parse_expression_with_parentheses(expression):
         # adding characters
         if open_parentheses:
             current_expression += char
+    # clean original expression of all expressions within parentheses
+    for simpler_expression in simpler_expressions:
+        expression = expression.replace(
+            simpler_expression,
+            ""
+        )
+    expression = expression.replace(
+        "(",
+        ""
+    ).replace(
+        ")",
+        ""
+    )
+    # add remaining simpler expressions
+    simpler_expressions += expression.split()[:-1]
     return simpler_expressions, operator
 
 
 if __name__ == "__main__":
     values = ["jaggerbomb", "vodka", "beer"]
-    print(rpn_logic("whisky NOT", values=values))
-    print(rpn_logic("vodka beer AND", values=values))
-    print(rpn_logic("vodka jagger AND", values=values))
-    print(rpn_logic("lemon jagger OR", values=values))
-    print(rpn_logic("lemon jaggerbomb OR", values=values))
+    print(complex_rpn_logic("whisky NOT", values=values))
+    print(complex_rpn_logic("vodka beer AND", values=values))
+    print(complex_rpn_logic("vodka jagger AND", values=values))
+    print(complex_rpn_logic("lemon jagger OR", values=values))
+    print(complex_rpn_logic("lemon jaggerbomb OR", values=values))
     print(complex_rpn_logic("(vodka beer (dear myself OR) AND) ((jaggerbomb here Miguel AND) NOT) OR",
                             values=values))
     print(complex_rpn_logic("(jaggerbomb here Miguel OR) NOT",

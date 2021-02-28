@@ -2,8 +2,10 @@ from operator import __or__, __and__
 
 
 def and_args(*args):
-    if len(args) < 2:
-        raise(ValueError("at least 2 values must be provided"))
+    if len(args) < 1:
+        raise(ValueError("at least 1 value must be provided"))
+    elif len(args) < 2:
+        return args[0]
     current_value = True
     for val in args:
         current_value = __and__(
@@ -14,8 +16,10 @@ def and_args(*args):
 
 
 def or_args(*args):
-    if len(args) < 2:
-        raise(ValueError("at least 2 values must be provided"))
+    if len(args) < 1:
+        raise(ValueError("at least 1 value must be provided"))
+    elif len(args) < 2:
+        return args[0]
     current_value = False
     for val in args:
         current_value = __or__(
